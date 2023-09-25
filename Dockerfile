@@ -15,6 +15,6 @@ RUN apt-get update && \
     apt-get remove -y git && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
-
+    
 # Set the entry point and default command
 CMD ["./Custota/target/release/custota-tool", "gen-csig", "--input", "ota.zip", "--key", "ota.key", "--cert", "ota.crt"]
