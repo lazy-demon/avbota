@@ -8,13 +8,8 @@ WORKDIR /app
 COPY . /app
 
 # Install necessary packages and cleanup
-RUN apt-get update && \
-    apt-get install -y git && \
-    cd Custota/custota-tool && \
-    cargo build --release && \
-    apt-get remove -y git && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+RUN sudo apt install git-all -y && git clone https://github.com/chenxiaolong/Custota && cd Custota/custota-tool && cargo build --release
+COPY Custota/target/release/custota-tool /
     
 # Set the entry point and default command
 CMD ["./Custota/target/release/custota-tool", "gen-csig", "--input", "ota.zip", "--key", "ota.key", "--cert", "ota.crt"]
