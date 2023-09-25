@@ -7,6 +7,18 @@ WORKDIR /app
 # Copy the entire project directory into the image (assuming Custota is in the same directory as Dockerfile)
 COPY . /app
 
-# Install necessary packages and cleanup
-RUN sudo apt install git-all -y && git clone https://github.com/chenxiaolong/Custota && cd Custota/custota-tool && cargo build --release && cd target/release && ./custota-tool gen-csig --input ota.zip --key ota.key  --cert ota.crt
- 
+# Install Git and other necessary packages
+RUN apt-get update && apt-get install -y git
+
+# Clone the repository, build the Rust application, and generate the csig
+RUN cd Custota/custota-tool && \
+    cargo build --release && \
+    ./target/release/custota-tool gen-csig --input ota.zip --key ota.key --cert ota.crt
+
+# Cleanup unnecessary packages
+RUN apt-get remove -y git && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set the entry point and default command
+CMD ["/app/Custota/custota-tool/target/release/custota-tool", "gen-csig", "--input", "ota.zip", "--key", "ota.key", "--cert", "ota.crt"]
